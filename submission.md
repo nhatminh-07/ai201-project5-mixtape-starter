@@ -35,5 +35,21 @@ if days_since_last == 0:
 
 If today.weekday() != 6, it means it is not Sunday--> add into the streak. But when you listen to the song on Sunday, the elif layer is false, so by the time you listen on Sunday, it returns to 1.
 
+## Issue 2
+Friends Listening Now shows people from yesterday 
+
+Files: `feed_service.py`.
+
+Here is the reproduction of the bug:
+
+kenji friends: ['aaliya', 'nova']
+kenji feed:  nova — "Midnight Drive" — listened_at = 2026-07-06T03:43:25  (2 hours ago)
+
+darius feed: simone — listened 15 min ago (legitimately recent)
+             nova    — "Midnight Drive" — listened 2 hours ago  ← same stale entry
+
+
+The likely issue is the RECENT_THRESHOLD = timedelta(hours=24) is simply too generous a window for a feature called "Listening Now." A period of 24 hours in the video is simply a correct period, however, playing at something 2+ hours ago is too old to create a "Listening Now" feature. I have moved RECENT_THRESHOLD to only one hour, 
+
 # AI Usage
 - I use AI like Claude to read through the code with me and graph the relationship between the code. I tries to verify the relationship in the graph, which calls and 
